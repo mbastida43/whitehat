@@ -26,4 +26,38 @@ mkdir -p rootfs
 ```
 
 **3. Instalar o sistema base:**
-Utilize o `dnf` com a flag `--use-host-config` para usar os reposit
+Utilize o `dnf` com a flag `--use-host-config` para usar os repositórios do host para baixar e construir o sistema base no novo diretório.
+```bash
+sudo dnf --installroot=$(pwd)/rootfs --releasever=40 --use-host-config install -y fedora-release dnf bash coreutils systemd passwd iproute util-linux
+```
+
+**4. Aplicar as configurações do WhiteHat:**
+Copie os arquivos de configuração personalizados do repositório para o novo RootFS recém-criado.
+```bash
+sudo cp -r config/* rootfs/etc/
+```
+
+**5. Gerar o arquivo .wsl:**
+Empacote o sistema de arquivos em um arquivo `tar` com a extensão `.wsl`, que é o formato nativo reconhecido pelo Windows para importação.
+```bash
+sudo tar -czpf whitehat-linux-1.0.wsl -C rootfs .
+```
+
+---
+
+## 🚀 Importação e Instalação no Windows
+
+Após gerar o arquivo `whitehat-linux-1.0.wsl`, mova-o para o sistema de arquivos do Windows (ex: copiando do WSL para `/mnt/c/Downloads/`). 
+
+Abra o **PowerShell** no Windows e execute os comandos abaixo para importar a distribuição:
+
+```powershell
+# 1. Criar a pasta onde a máquina virtual será armazenada (exemplo)
+mkdir C:\WSL\WhiteHat
+
+# 2. Importar o arquivo .wsl
+wsl --import WhiteHat C:\WSL\WhiteHat C:\Downloads\whitehat-linux-1.0.wsl
+
+# 3. Iniciar a sua nova distribuição
+wsl -d WhiteHat
+```
