@@ -8,8 +8,8 @@ Distribuição Linux minimalista em modo texto, baseada nos pacotes oficiais do 
 
 ## Download Oficial
 
-* **[Baixar WhiteHat Linux 1.0 (x86_64 ISO - 291 MB)](https://github.com)**
-* **[Acessar Página de Releases e Versões](https://github.com)**
+* **[Baixar WhiteHat Linux 1.0 (x86_64 ISO - 291 MB)](../../releases/download/v1.0/WhiteHat-1.0-x86_64.iso)**
+* **[Acessar Página de Releases e Versões](../../releases)**
 
 ---
 
