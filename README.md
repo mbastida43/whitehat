@@ -1,13 +1,15 @@
 # WhiteHat Linux 1.0
 
-![Base](https://shields.io)
-![Interface](https://shields.io)
-![License](https://shields.io)
-![Containers](https://shields.io)
+**Base:** Fedora Server 45 | **Interface:** 100% CLI (Modo Texto) | **Containers:** Podman & Docker | **Licença:** GNU GPL v3.0
 
 Distribuição Linux minimalista em modo texto, baseada nos pacotes oficiais do Fedora Server, projetada para ser enxuta, rodar diretamente em memória RAM ou instalada em disco, e contar com gerenciador de pacotes nativo.
 
-[![Download ISO](https://shields.io)](https://github.com)
+---
+
+## Download Oficial
+
+* **[Baixar WhiteHat Linux 1.0 (x86_64 ISO - 291 MB)](https://github.com)**
+* **[Acessar Página de Releases e Versões](https://github.com)**
 
 ---
 
@@ -24,7 +26,7 @@ Distribuição Linux minimalista em modo texto, baseada nos pacotes oficiais do 
 
 ## Como Testar (VirtualBox / VMware / QEMU)
 
-1. Baixe o arquivo **`WhiteHat-1.0-x86_64.iso`** clicando no botão verde acima.
+1. Baixe o arquivo **`WhiteHat-1.0-x86_64.iso`** no link da seção **Download Oficial** acima.
 2. Crie uma máquina virtual **Linux / Fedora (64-bit)** com pelo menos **1 GB de RAM** (2 GB recomendados para usar containers).
 3. Aponte a ISO no leitor óptico virtual e inicie a máquina.
 4. Na primeira inicialização, siga o assistente na tela para criar seu **usuário comum** e senha.
