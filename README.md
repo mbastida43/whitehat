@@ -13,3 +13,4 @@ Distribuição Linux minimalista em modo texto, baseada nos pacotes oficiais do 
 ## Credenciais Padrão (Caso acesse como Root)
 * **Usuário:** `root`
 * **Senha:** `whitehat`
+# whitehat
