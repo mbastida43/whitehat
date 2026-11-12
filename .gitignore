@@ -1,0 +1,4 @@
+*.iso
+*.img
+rootfs/
+temp/

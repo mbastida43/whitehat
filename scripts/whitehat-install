@@ -1,0 +1,72 @@
+#!/bin/bash
+if [ "$(id -u)" -ne 0 ]; then
+    echo "[ERRO] Execute este instalador como root: sudo whitehat-install"
+    exit 1
+fi
+
+clear
+echo "===================================================="
+echo "   Instalador Permanente - WhiteHat Linux 1.0       "
+echo "===================================================="
+echo ""
+echo "Discos detectados no sistema:"
+lsblk -d -o NAME,SIZE,MODEL | grep -v "sr0"
+echo ""
+printf "Digite o disco de destino (ex: sda ou vda): "
+read DISK_NAME
+
+TARGET_DISK="/dev/${DISK_NAME}"
+TARGET_PART="${TARGET_DISK}1"
+
+if [ ! -b "$TARGET_DISK" ]; then
+    echo "[ERRO] O disco $TARGET_DISK nao foi encontrado."
+    exit 1
+fi
+
+echo ""
+echo "ATENCAO: TODOS os dados em $TARGET_DISK serao apagados!"
+printf "Digite 'SIM' para confirmar a instalacao: "
+read CONFIRM
+
+if [ "$CONFIRM" != "SIM" ]; then
+    echo "Instalacao cancelada."
+    exit 0
+fi
+
+echo ""
+echo "[1/4] Particionando e formatando $TARGET_DISK..."
+parted -s "$TARGET_DISK" mklabel msdos
+parted -s "$TARGET_DISK" mkpart primary ext4 1MiB 100%
+parted -s "$TARGET_DISK" set 1 boot on
+sleep 2
+mkfs.ext4 -F -L "WHITEHAT_ROOT" "$TARGET_PART" > /dev/null
+
+echo "[2/4] Copiando arquivos do sistema para o disco..."
+mkdir -p /mnt/install
+mount "$TARGET_PART" /mnt/install
+cp -ax / /mnt/install 2>/dev/null
+mkdir -p /mnt/install/{proc,sys,dev,tmp,run,mnt}
+chmod 1777 /mnt/install/tmp
+
+echo "[3/4] Configurando Kernel e Bootloader (GRUB)..."
+mkdir -p /mnt/install/boot/grub2
+cp /lib/modules/*/vmlinuz /mnt/install/boot/vmlinuz 2>/dev/null || cp /boot/vmlinuz /mnt/install/boot/vmlinuz 2>/dev/null
+
+grub2-install --boot-directory=/mnt/install/boot "$TARGET_DISK"
+
+cat << 'GRUBEOF' > /mnt/install/boot/grub2/grub.cfg
+set timeout=3
+set default=0
+
+menuentry "WhiteHat Linux 1.0 (Instalado no Disco)" {
+    linux /boot/vmlinuz root=LABEL=WHITEHAT_ROOT rw console=tty0 nomodeset init=/init
+}
+GRUBEOF
+
+echo "[4/4] Finalizando..."
+umount /mnt/install
+echo ""
+echo "===================================================="
+echo "   Instalacao concluida com sucesso!                "
+echo "   Remova a ISO e digite 'sudo reboot -f'           "
+echo "===================================================="

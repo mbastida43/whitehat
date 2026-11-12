@@ -1,0 +1,142 @@
+#!/bin/sh
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t devtmpfs none /dev
+mkdir -p /dev/pts /run/lock /var/log /var/lib/dhclient /home
+mount -t devpts devpts /dev/pts 2>/dev/null
+
+# Silencia mensagens do kernel na tela
+dmesg -n 1 2>/dev/null
+
+# Carrega drivers de teclado (PS/2 e USB) imediatamente
+modprobe i8042 2>/dev/null
+modprobe atkbd 2>/dev/null
+modprobe hid 2>/dev/null
+modprobe hid_generic 2>/dev/null
+modprobe usbhid 2>/dev/null
+modprobe xhci_hcd 2>/dev/null
+modprobe ehci_hcd 2>/dev/null
+modprobe ohci_hcd 2>/dev/null
+
+hostname -F /etc/hostname 2>/dev/null
+
+# Carrega drivers de rede
+modprobe e1000 2>/dev/null
+modprobe e1000e 2>/dev/null
+modprobe virtio_net 2>/dev/null
+modprobe r8169 2>/dev/null
+
+# Ativa a rede em segundo plano
+(
+    ip link set lo up 2>/dev/null
+    for iface in /sys/class/net/*; do
+        dev=$(basename "$iface")
+        if [ "$dev" != "lo" ]; then
+            ip link set "$dev" up 2>/dev/null
+            dhclient -1 "$dev" 2>/dev/null
+        fi
+    done
+) &
+
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export TERM=linux
+
+# ==============================================================================
+# ASSISTENTE DE PRIMEIRA INICIALIZAÇÃO
+# ==============================================================================
+if [ ! -f /etc/.setup_done ]; then
+    while true; do
+        clear
+        echo "===================================================="
+        echo "   Configuracao Inicial - WhiteHat Linux 1.0        "
+        echo "===================================================="
+        echo ""
+        echo "Crie sua conta de usuario padrao (com acesso ao sudo)."
+        echo ""
+        printf "Digite o nome do novo usuario: "
+        read NEW_USER </dev/tty1
+
+        if [ -z "$NEW_USER" ] || [ "$NEW_USER" = "root" ]; then
+            echo ""
+            echo "[ERRO] Nome invalido ou reservado. Tente novamente."
+            sleep 2
+            continue
+        fi
+
+        echo ""
+        printf "Digite a senha para %s: " "$NEW_USER"
+        stty -echo </dev/tty1 2>/dev/null
+        read PASS1 </dev/tty1
+        stty echo </dev/tty1 2>/dev/null
+        echo ""
+
+        printf "Confirme a senha para %s: " "$NEW_USER"
+        stty -echo </dev/tty1 2>/dev/null
+        read PASS2 </dev/tty1
+        stty echo </dev/tty1 2>/dev/null
+        echo ""
+
+        if [ -z "$PASS1" ] || [ "$PASS1" != "$PASS2" ]; then
+            echo ""
+            echo "[ERRO] Senha vazia ou as senhas nao coincidem! Tente novamente."
+            sleep 2
+            continue
+        fi
+
+        useradd -m -s /bin/bash -G wheel "$NEW_USER" 2>/dev/null
+        HASH=$(/bin/busybox mkpasswd -m sha512 "$PASS1")
+        sed -i "s|^${NEW_USER}:[^:]*:|${NEW_USER}:${HASH}:|" /etc/shadow
+
+        touch /etc/.setup_done
+        echo ""
+        echo "[OK] Usuario comum '$NEW_USER' criado com sucesso!"
+        sleep 2
+        break
+    done
+fi
+
+# ==============================================================================
+# TELA DE LOGIN PADRÃO
+# ==============================================================================
+while true; do
+    clear
+    echo "===================================================="
+    echo "   WhiteHat Linux 1.0 - Base Fedora 45 (Texto)      "
+    echo "===================================================="
+    echo ""
+    printf "whitehat login: "
+    read USER_INPUT </dev/tty1
+
+    if grep -q "^${USER_INPUT}:" /etc/passwd 2>/dev/null; then
+        printf "Password: "
+        stty -echo </dev/tty1 2>/dev/null
+        read PASS_INPUT </dev/tty1
+        stty echo </dev/tty1 2>/dev/null
+        echo ""
+
+        STORED_HASH=$(grep "^${USER_INPUT}:" /etc/shadow | cut -d: -f2)
+        SALT=$(echo "$STORED_HASH" | cut -d'$' -f1-3)
+        CHECK_HASH=$(/bin/busybox mkpasswd -m sha512 "$PASS_INPUT" "$SALT" 2>/dev/null)
+
+        if [ "$STORED_HASH" = "$CHECK_HASH" ] || ([ "$USER_INPUT" = "root" ] && [ "$PASS_INPUT" = "whitehat" ]); then
+            clear
+            echo "Bem-vindo ao WhiteHat Linux 1.0, ${USER_INPUT}!"
+            echo "Use 'sudo dnf update' para atualizar ou 'sudo su' para virar root."
+            echo ""
+            if [ "$USER_INPUT" = "root" ]; then
+                setsid -c /bin/bash --login </dev/tty1 >/dev/tty1 2>&1
+            else
+                setsid -c su - "$USER_INPUT" </dev/tty1 >/dev/tty1 2>&1
+            fi
+        else
+            echo "Login incorrect"
+            sleep 2
+        fi
+    else
+        echo "Login incorrect"
+        sleep 2
+    fi
+done
