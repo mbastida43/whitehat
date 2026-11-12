@@ -2,6 +2,7 @@
 
 ![Base](https://shields.io)
 ![Interface](https://shields.io)
+![License](https://shields.io)
 ![Containers](https://shields.io)
 
 Distribuição Linux minimalista em modo texto, baseada nos pacotes oficiais do Fedora Server, projetada para ser enxuta, rodar diretamente em memória RAM ou instalada em disco, e contar com gerenciador de pacotes nativo.
