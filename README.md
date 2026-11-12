@@ -130,9 +130,3 @@ wsl --import WhiteHat C:\WSL\WhiteHat C:\Downloads\whitehat-linux-1.0.wsl
 
 # 3. Start your new distribution
 wsl -d WhiteHat
-```
-wsl --import WhiteHat C:\WSL\WhiteHat C:\Downloads\whitehat-linux-1.0.wsl
-
-# 3. Iniciar a sua nova distribuição
-wsl -d WhiteHat
-```
