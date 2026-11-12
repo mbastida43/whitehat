@@ -4,7 +4,17 @@
 
 **Base:** Fedora Server 45 | **Interface:** 100% CLI | **Licença:** GNU GPL v3.0
 
-Distribuição Linux minimalista em modo texto baseada no Fedora Server. Consulte o repositório para obter o guia completo de instalação via ISO ou o empacotamento WSL2 (`.wsl`).
+Distribuição Linux minimalista em modo texto baseada no Fedora Server 45. Consulte abaixo as instruções para inicialização via ISO ou o empacotamento para WSL2 (`.wsl`).
+
+---
+
+## 💿 Inicialização e Uso via ISO
+
+1. **Download:** Baixe a imagem `WhiteHat-1.0-x86_64.iso` clicando no botão acima ou na aba [Releases](https://github.com/mbastida43/whitehat/releases).
+2. **Inicialização (Boot):** Grave a ISO em um pendrive ou carregue em uma máquina virtual (VirtualBox, QEMU/KVM, VMware). Suporta inicialização **UEFI** e **BIOS Legacy**.
+3. **Acesso ao Sistema (Login):**
+   * **Usuário:** `[INSIRA O USUÁRIO PADRÃO]`
+   * **Senha:** `[INSIRA A SENHA PADRÃO]`
 
 ---
 
@@ -16,7 +26,7 @@ Para compilar e gerar a imagem do WhiteHat Linux 1.0 para o Windows Subsystem fo
 
 **1. Clonar o repositório:**
 ```bash
-git clone [https://github.com/mbastida43/whitehat.git](https://github.com/mbastida43/whitehat.git)
+git clone https://github.com/mbastida43/whitehat.git
 cd whitehat
 ```
 
@@ -28,7 +38,7 @@ mkdir -p rootfs
 **3. Instalar o sistema base:**
 Utilize o `dnf` com a flag `--use-host-config` para usar os repositórios do host para baixar e construir o sistema base no novo diretório.
 ```bash
-sudo dnf --installroot=$(pwd)/rootfs --releasever=40 --use-host-config install -y fedora-release dnf bash coreutils systemd passwd iproute util-linux
+sudo dnf --installroot=\$(pwd)/rootfs --releasever=45 --use-host-config install -y fedora-release dnf bash coreutils systemd passwd iproute util-linux
 ```
 
 **4. Aplicar as configurações do WhiteHat:**
@@ -74,7 +84,17 @@ wsl -d WhiteHat
 
 **Base:** Fedora Server 45 | **Interface:** 100% CLI | **License:** GNU GPL v3.0
 
-Minimalist text-mode Linux distribution based on Fedora Server. Check the repository for the complete ISO installation guide or the WSL2 packaging (`.wsl`).
+Minimalist text-mode Linux distribution based on Fedora Server 45. Check below for the ISO boot guide or the WSL2 packaging (`.wsl`) instructions.
+
+---
+
+## 💿 ISO Boot and Usage
+
+1. **Download:** Get the `WhiteHat-1.0-x86_64.iso` image using the button above or from the [Releases](https://github.com/mbastida43/whitehat/releases) page.
+2. **Boot:** Flash the ISO to a USB drive or load it into a virtual machine (VirtualBox, QEMU/KVM, VMware). Supports both **UEFI** and **Legacy BIOS** boot.
+3. **System Access (Login):**
+   * **Username:** `[INSERT DEFAULT USERNAME]`
+   * **Password:** `[INSERT DEFAULT PASSWORD]`
 
 ---
 
@@ -86,7 +106,7 @@ To compile and generate the WhiteHat Linux 1.0 image for the Windows Subsystem f
 
 **1. Clone the repository:**
 ```bash
-git clone [https://github.com/mbastida43/whitehat.git](https://github.com/mbastida43/whitehat.git)
+git clone https://github.com/mbastida43/whitehat.git
 cd whitehat
 ```
 
@@ -98,7 +118,7 @@ mkdir -p rootfs
 **3. Install the base system:**
 Use `dnf` with the `--use-host-config` flag to use the host's repositories to download and build the base system in the new directory.
 ```bash
-sudo dnf --installroot=$(pwd)/rootfs --releasever=40 --use-host-config install -y fedora-release dnf bash coreutils systemd passwd iproute util-linux
+sudo dnf --installroot=\$(pwd)/rootfs --releasever=45 --use-host-config install -y fedora-release dnf bash coreutils systemd passwd iproute util-linux
 ```
 
 **4. Apply WhiteHat configurations:**
@@ -130,3 +150,5 @@ wsl --import WhiteHat C:\WSL\WhiteHat C:\Downloads\whitehat-linux-1.0.wsl
 
 # 3. Start your new distribution
 wsl -d WhiteHat
+```
+
